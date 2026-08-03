@@ -52,8 +52,12 @@ def rc4_decrypt(key,data,datalen):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('files', nargs='+')
+    parser.add_argument('-o', '--output', help='결과를 JSON 파일로 저장')
     parser.add_argument('--json', action='store_true')
     args = parser.parse_args()
+    if args.output and os.path.exists(args.output):
+        print(f"[!] 이미 존재하는 파일입니다: {args.output}")
+        exit(1)
     info = get_file_info(args.files[0])
     key, payload = extract(info)
     payload_len = len(payload)
@@ -61,14 +65,19 @@ if __name__ == "__main__":
     DELIM = bytes([0x7C, 0x1E, 0x1E, 0x1F, 0x7C])
     pt = bytes(plane_text)
     print(f"RemCos RAT Version {list(FIELD_MAPS.keys())[0]}")
-    if args.json:
-        json_output = {}
-        for idx, f in enumerate(pt.split(DELIM)):
-            entry = FIELD_MAPS['7.2.0'].get(idx)
-            if entry:
-                json_output[entry[0]] = normalize(f,entry[1])
-            else:
-                json_output[f"Unknown_Field{idx:02d}"] = guess(f)
+    json_output = {}
+    for idx, f in enumerate(pt.split(DELIM)):
+        entry = FIELD_MAPS['7.2.0'].get(idx)
+        if entry:
+            json_output[entry[0]] = normalize(f,entry[1])
+        else:
+            json_output[f"Unknown_Field{idx:02d}"] = guess(f)
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as f:
+            json.dump(json_output, f, indent=2, ensure_ascii=False)
+        print(f"[+] saved: {args.output}")
+    elif args.json:
         print(json.dumps(json_output, indent=2))
-    with open(r"output.json", "w", encoding="utf-8") as f:
-        json.dump(json_output, f, indent=2, ensure_ascii=False)
+    else:
+        for k, v in json_output.items():
+            print(f" {k:12s} = {v}")
