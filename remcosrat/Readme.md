@@ -9,7 +9,7 @@ Remcos RAT 7.2.0 Pro의 `SETTINGS` 리소스에서 암호화된 설정을 복호
 
 python extractor.py sample.exe              # 기본 출력
 python extractor.py sample.exe --json       # JSON 형태로 출력
-python extractor.py sample.exe --output     # JSON 파일로 저장
+python extractor.py sample.exe -o ./output_sample.json     # JSON 파일로 저장
 ```
 
 ## Config 구조
