@@ -15,3 +15,5 @@ python extractor.py sample.exe --output     # JSON 파일로 저장
 ## Config 구조
 
 `SETTINGS` (RCDATA) 리소스에 구분자를 기준으로 필드 형식으로 저장된다.
+## Field Map
+분석 후 필드가 어디에 쓰이는지 기록
